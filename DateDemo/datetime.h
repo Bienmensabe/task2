@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <cmath>
 
 class DateTime {
 
@@ -24,15 +25,15 @@ public:
     void printWeekDay();
 
     int calcDifference(DateTime);
-
-    void printSomeDay(int);
-    time_t getRawtime() const;
     
 private:
 
     struct tm * timeinfo;
     time_t rawtime;
     const int secsPerDay = 86400;
+
+    void printSomeDay(int);
+    time_t getRawtime() const;
 
 };
 

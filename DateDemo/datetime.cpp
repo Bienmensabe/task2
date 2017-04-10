@@ -48,7 +48,7 @@ void DateTime::printWeekDay() {
 }
 
 int DateTime::calcDifference(DateTime date) {
-    double difference = difftime(rawtime,date.getRawtime());
+    double difference = abs(difftime(rawtime,date.getRawtime()));
     difference = (int) (difference/secsPerDay);
     return difference;
 }
