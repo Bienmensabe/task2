@@ -1,7 +1,3 @@
 COFFEE 10
 COOL TEA 20
-allo 10
-xui 100
-privet 1000
-DIMAS DRINK 1
-wee woo 100
+Americano 30
