@@ -1,3 +1,0 @@
-COFFEE 10
-COOL TEA 20
-americano 30
