@@ -2,7 +2,6 @@
 
 void Automata::on() {
     STATE = WAIT;
-    checkMenu();
     balance = 0;
 
     while (STATE != OFF) {
@@ -10,7 +9,7 @@ void Automata::on() {
 
         switch(STATE) {
         case WAIT:
-
+            checkMenu();
             printState();
             option = getInt();
 
@@ -30,6 +29,10 @@ void Automata::on() {
             case 4:
                off();
                break;
+
+            case 5:
+                STATE = SETMENU;
+                break;
 
             default:
                std::cout << "eror" << std::endl;
@@ -56,8 +59,14 @@ void Automata::on() {
             choice(check);
             break;
 
+        case SETMENU:
+            printState();
+            setMenu();
+
+            break;
+
         default:
-            ;
+            std::cout << "error" << std::endl;
         }
     }
 }
@@ -77,20 +86,64 @@ void Automata::coin(int money) {
 void Automata::printMenu() {
     std::cout << "Menu:\n";
     for (int i = 0; i < menuSize; i++)
-        std::cout << (i+1) << ". " << menu[i].name<< " " << menu[i].price << " rub" << std::endl;
+        std::cout << (i+1) << ". " << menu[i].name<< "\t" << menu[i].price << " rub" << std::endl;
 }
 
 void Automata::checkMenu() {
-    menuFile = fopen("/home/terpsichore/task2/AutomataDemo2/menu.txt", "r");
+    std::ifstream menuFILE ("/home/terpsichore/task2/AutomataDemo2/menu.txt");
 
-    if (menuFile == NULL) {
-         std::cout << "eror\n" << std::endl;
-     }
+    if(menuFILE.is_open()){
+        char ch;
+        std::string tmpName;
+        std::string tmpPrice;
+        int i = 0;
 
-    int i = 0;
-    while (fscanf (menuFile, "%s%i", menu[i].name, &(menu[i].price)) != EOF)
-        i++;
-    menuSize = i;
+        while (menuFILE.get(ch)) {
+           if(isdigit(ch)) {
+               tmpPrice += ch;
+           } else if (ch != '\n' && ch != '\0') {
+               tmpName += ch;
+           } else {
+               menu[i].name = tmpName;
+               menu[i].price = stoi(tmpPrice);
+
+               tmpName = "";
+               tmpPrice = "";
+               i++;
+           }
+        }
+
+        menuSize = i;
+        menuFILE.close();
+    } else {
+        std::cout << "File not found" << std::endl;
+        menuFILE.close();
+    }
+}
+
+void Automata::setMenu() {
+
+    std::ofstream menuFILE ("/home/terpsichore/task2/AutomataDemo2/menu.txt", std::ios_base::app);
+
+    if(menuFILE.is_open()){
+        std::string str1;
+
+        std::getline(std::cin, str1);
+        system("reset");
+
+        if (str1 == "0")
+            STATE = WAIT;
+        else {
+            menuFILE << str1;
+            menuFILE << "\n";
+            menuFILE.close();
+        }
+
+    } else {
+        std::cout << "File not found" << std::endl;
+        menuFILE.close();
+    }
+    STATE = WAIT;
 }
 
 void Automata::printState() {
@@ -100,7 +153,8 @@ void Automata::printState() {
             << "1 - Deposit money\n"
             << "2 - Choose drink\n"
             << "3 - Take odd money\n"
-            << "4 - Turn off\n\n"
+            << "4 - Turn off\n"
+            << "5 - Set menu\n\n"
             << "Current balance: " << balance << " rub" << std::endl;
         break;
     case ACCEPT:
@@ -108,6 +162,10 @@ void Automata::printState() {
         break;
     case CHECK:
         std::cout << "\nChoose your drink (0 - back to menu)\n" << std::endl;
+        break;
+    case SETMENU:
+        std::cout << "Input your menu position(name price)\n0 - back to menu\n" << std::endl;
+        break;
     }
 }
 
@@ -116,7 +174,7 @@ void Automata::choice(int option) {
     if ((option >= 1) & (option <= menuSize))
         check(option);
     else {
-        std::cout << "Eror check" << std::endl;
+        std::cout << "Error check" << std::endl;
         STATE = WAIT;
     }
 }
@@ -157,11 +215,13 @@ void Automata::returnOdd() {
 int Automata::getInt() {
     std::string str;
     int a;
-    std::cin >> str;
+
+    std::getline(std::cin, str);
     std::cin.clear();
     system("reset");
+
     if (str[0] == 27){
-        a = 27;
+        a = 27; //ESC
         return a;
     }
     if (std::all_of(str.begin(), str.end(), ::isdigit) == true) {

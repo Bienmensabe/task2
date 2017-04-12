@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
+#include <fstream>
 
-#define N_MAX_NAME_SIZE 40
 #define N_MAX_MENU_SIZE 20
 
 
@@ -17,12 +17,11 @@ public:
 
 private:
 
-    enum STATE {OFF, WAIT, ACCEPT, CHECK, COOK};
+    enum STATE {OFF, WAIT, ACCEPT, CHECK, SETMENU};
     int STATE = OFF;
 
-    FILE *menuFile;
     struct coffeeList {
-        char name[N_MAX_NAME_SIZE];
+        std::string name;
         int price;
     };
     struct coffeeList menu[N_MAX_MENU_SIZE];
@@ -35,6 +34,7 @@ private:
 
     void printState();
     void checkMenu();
+    void setMenu();
     void printMenu();
     void choice(int);
     void check(int);
@@ -43,6 +43,7 @@ private:
     void finish();
     void returnOdd();
     int getInt();
+
 
 };
 
