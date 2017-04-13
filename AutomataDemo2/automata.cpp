@@ -1,6 +1,7 @@
 #include "automata.h"
 
 void Automata::on() {
+    menu.resize(N_MAX_MENU_SIZE);
     STATE = WAIT;
     balance = 0;
 
@@ -33,9 +34,12 @@ void Automata::on() {
             case 5:
                 STATE = SETMENU;
                 break;
+            case 6:
+                STATE = DELETEMENU;
+                break;
 
             default:
-               std::cout << "eror" << std::endl;
+               std::cout << "error case" << std::endl;
                STATE = WAIT;
             }
             break;
@@ -62,11 +66,19 @@ void Automata::on() {
         case SETMENU:
             printState();
             setMenu();
+            break;
 
+        case DELETEMENU:
+            printMenu();
+            printState();
+            int positionMenu;
+            positionMenu = getInt();
+            cancel(positionMenu);
+            deleteMenu(positionMenu);
             break;
 
         default:
-            std::cout << "error" << std::endl;
+            std::cout << "error STATE" << std::endl;
         }
     }
 }
@@ -77,6 +89,8 @@ void Automata::off() {
     tmp = getInt();
     if (tmp != 27)
         on();
+    else
+        exit(0);
 }
 
 void Automata::coin(int money) {
@@ -146,6 +160,38 @@ void Automata::setMenu() {
     STATE = WAIT;
 }
 
+void Automata::deleteMenu(int position) {
+
+    if (position > menuSize || position < menuSize) {
+        std::cout << "Error delete" << std::endl;
+        STATE = WAIT;
+    } else {
+        position--;
+        std::ifstream menuFILE ("/home/terpsichore/task2/AutomataDemo2/menu.txt");
+        if(menuFILE.is_open()){
+            std::string deleteline;
+            std::string pricestring = std::to_string(menu[position].price);
+            std::string line;
+
+            deleteline = menu[position].name;
+            deleteline += pricestring;
+            //deleteline += "\n";
+
+            while (std::getline(menuFILE, line)) {
+                if (line == deleteline) {
+                    line.replace(line.find(deleteline),deleteline.length(),"");
+                }
+            }
+            menu.erase (menu.begin() + position);
+            menuFILE.close();
+            STATE = WAIT;
+        } else {
+            std::cout << "File not found" << std::endl;
+            menuFILE.close();
+        }
+    }
+}
+
 void Automata::printState() {
     switch(STATE) {
     case WAIT:
@@ -154,7 +200,8 @@ void Automata::printState() {
             << "2 - Choose drink\n"
             << "3 - Take odd money\n"
             << "4 - Turn off\n"
-            << "5 - Set menu\n\n"
+            << "5 - Set menu\n"
+            << "6 - Delete menu\n\n"
             << "Current balance: " << balance << " rub" << std::endl;
         break;
     case ACCEPT:
@@ -166,6 +213,10 @@ void Automata::printState() {
     case SETMENU:
         std::cout << "Input your menu position(name price)\n0 - back to menu\n" << std::endl;
         break;
+    case DELETEMENU:
+        std::cout << "Choose menu position (0 - back to menu)\n" << std::endl;
+        break;
+
     }
 }
 
@@ -230,4 +281,3 @@ int Automata::getInt() {
     } else
         return 0;
 }
-

@@ -1,3 +1,4 @@
-COFFEE 10
-COOL TEA 20
-Americano 30
+Coffee 10
+Cool tea 20
+Pogr coffee 10
+Coffee americano 20

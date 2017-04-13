@@ -5,9 +5,9 @@
 #include <cstring>
 #include <algorithm>
 #include <fstream>
+#include <vector>
 
 #define N_MAX_MENU_SIZE 20
-
 
 class Automata {
 public:
@@ -17,14 +17,14 @@ public:
 
 private:
 
-    enum STATE {OFF, WAIT, ACCEPT, CHECK, SETMENU};
+    enum STATE {OFF, WAIT, ACCEPT, CHECK, SETMENU, DELETEMENU};
     int STATE = OFF;
 
     struct coffeeList {
         std::string name;
         int price;
     };
-    struct coffeeList menu[N_MAX_MENU_SIZE];
+    std::vector <coffeeList> menu;
 
     int menuSize;
 
@@ -35,6 +35,7 @@ private:
     void printState();
     void checkMenu();
     void setMenu();
+    void deleteMenu(int);
     void printMenu();
     void choice(int);
     void check(int);
